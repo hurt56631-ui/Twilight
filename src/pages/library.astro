@@ -1,0 +1,8 @@
+---
+import GridLayout from "@layouts/grid.astro";
+import BookLibrary from "../components/BookLibrary.jsx";
+---
+
+<GridLayout title="Library">
+  <BookLibrary client:load isOpen={true} />
+</GridLayout>
