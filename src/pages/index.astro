@@ -1,0 +1,454 @@
+---
+import GridLayout from "@layouts/grid.astro";
+
+const pinyinNav = [
+  { name: "ဗျည်းများ", sub: "Initials", icon: "initials", href: "/pinyin/initials", accent: "#2563eb", soft: "rgba(37,99,235,.14)" },
+  { name: "သရများ", sub: "Finals", icon: "finals", href: "/pinyin/finals", accent: "#059669", soft: "rgba(5,150,105,.14)" },
+  { name: "ပေါင်းစပ်ဖတ်နည်း", sub: "Syllables", icon: "syllables", href: "/pinyin/syllables", accent: "#9333ea", soft: "rgba(147,51,234,.14)" },
+  { name: "အသံအနိမ့်အမြင့်", sub: "Tones", icon: "tones", href: "/pinyin/tones", accent: "#ea580c", soft: "rgba(234,88,12,.14)" },
+];
+
+const coreTools = [
+  { title: "AI ဘာသာပြန်", sub: "AI Translate", icon: "ai", href: "/ai-translate", accent: "#4f46e5", soft: "rgba(79,70,229,.14)" },
+  { title: "အခမဲ့စာအုပ်များ", sub: "Library", icon: "library", href: "/library", accent: "#0f766e", soft: "rgba(15,118,110,.14)" },
+  { title: "စကားလုံးစုဆောင်းခြင်း", sub: "Words", icon: "star", href: "/words", accent: "#b45309", soft: "rgba(180,83,9,.14)" },
+  { title: "အသုံးအနှုန်းစုများ", sub: "Oral", icon: "mic", href: "/oral", accent: "#be123c", soft: "rgba(190,18,60,.14)" },
+];
+
+const studyPaths = [
+  { title: "အဓိကစကားလုံးများ", icon: "pathWords", desc: "HSK အခြေခံ စကားလုံးများကို လေ့လာပါ။", count: "၁၂၅၀ လုံး", href: "/path/words", accent: "#2563eb" },
+  { title: "အခြေအနေနှင့်ဆိုင်သော စကားပြော", icon: "pathOral", desc: "နေ့စဉ်သုံး စကားပြောဆိုမှုများကို လေ့ကျင့်ပါ။", count: "၄၈ ခန်း", href: "/path/oral", accent: "#059669" },
+  { title: "သဒ္ဒါအချက်များ", icon: "pathGrammar", desc: "တရုတ်ဘာသာစကား၏ သဒ္ဒါစည်းမျဉ်းများကို နားလည်စေရန်။", count: "၁၂ ချက်", href: "/path/grammar", accent: "#d97706" },
+];
+
+const iconMap = {
+  initials: {
+    viewBox: "0 0 24 24",
+    paths: ["M5 19h14", "M8 19l4-14 4 14", "M9.7 13h4.6"],
+  },
+  finals: {
+    viewBox: "0 0 24 24",
+    paths: ["M4 10c2-2 4-2 6 0s4 2 6 0 4-2 4-2", "M4 15c2-2 4-2 6 0s4 2 6 0 4-2 4-2"],
+  },
+  syllables: {
+    viewBox: "0 0 24 24",
+    paths: ["M6 6h5v5H6z", "M13 6h5v5h-5z", "M6 13h5v5H6z", "M13 13h5v5h-5z"],
+  },
+  tones: {
+    viewBox: "0 0 24 24",
+    paths: ["M6 4v16", "M12 4v16", "M18 4v16", "M4 9h4", "M10 14h4", "M16 7h4"],
+  },
+  ai: {
+    viewBox: "0 0 24 24",
+    paths: ["M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8L12 3z", "M19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9L19 14z"],
+  },
+  library: {
+    viewBox: "0 0 24 24",
+    paths: ["M4 6.5A2.5 2.5 0 0 1 6.5 4H11v15H6.5A2.5 2.5 0 0 1 4 16.5z", "M20 6.5A2.5 2.5 0 0 0 17.5 4H13v15h4.5a2.5 2.5 0 0 0 2.5-2.5z"],
+  },
+  star: {
+    viewBox: "0 0 24 24",
+    paths: ["M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.8 1-6.1L3.2 9.4l6.1-.9z"],
+  },
+  mic: {
+    viewBox: "0 0 24 24",
+    paths: ["M12 4a3 3 0 0 1 3 3v4a3 3 0 0 1-6 0V7a3 3 0 0 1 3-3z", "M7 11a5 5 0 0 0 10 0", "M12 16v4", "M9 20h6"],
+  },
+  pathWords: {
+    viewBox: "0 0 24 24",
+    paths: ["M6 4h9l3 3v13H6z", "M15 4v3h3", "M9 12h6", "M9 16h6"],
+  },
+  pathOral: {
+    viewBox: "0 0 24 24",
+    paths: ["M4 5h16v10H8l-4 4z", "M9 9h6", "M9 12h4"],
+  },
+  pathGrammar: {
+    viewBox: "0 0 24 24",
+    paths: ["M9 18h6", "M10 14h4", "M12 3a6 6 0 0 0-3.8 10.6c.9.8 1.8 1.7 1.8 2.9h4c0-1.2.9-2.1 1.8-2.9A6 6 0 0 0 12 3z"],
+  },
+};
+
+const getIcon = (name) => iconMap[name] || iconMap.initials;
+---
+
+<GridLayout title="Learning Center">
+  <main class="relative mx-auto max-w-5xl px-4 pb-14 pt-8">
+    <section class="glass-card hero-card card-in">
+      <div>
+        <p class="badge">Learning Center</p>
+        <h1 class="mt-3 text-2xl font-black leading-tight text-slate-900 sm:text-4xl">
+          Pinyin & Language Skills Hub
+        </h1>
+        <p class="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
+          Initials · Finals · Syllables · Tones · Vocabulary · Grammar · Conversation
+        </p>
+        <div class="mt-5 flex flex-wrap gap-3">
+          <a href="/pinyin/initials" class="btn btn-primary">Start Pinyin</a>
+          <a href="/ai-translate" class="btn btn-ghost">Open AI Translate</a>
+        </div>
+      </div>
+      <div class="hero-kpi">
+        <div class="kpi-ring"><span>63%</span></div>
+        <p class="mt-3 text-center text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Weekly Goal</p>
+      </div>
+    </section>
+
+    <section class="mt-7 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      {pinyinNav.map((item) => {
+        const icon = getIcon(item.icon);
+        return (
+          <a href={item.href} class="pinyin-card card-in" style={`--accent:${item.accent};--soft:${item.soft};`}>
+            <div class="pinyin-icon-wrap">
+              <svg viewBox={icon.viewBox} class="svg-icon" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                {icon.paths.map((d) => (
+                  <path d={d} stroke-linecap="round" stroke-linejoin="round"></path>
+                ))}
+              </svg>
+            </div>
+            <p class="pinyin-name">{item.name}</p>
+            <p class="pinyin-sub">{item.sub}</p>
+          </a>
+        );
+      })}
+    </section>
+
+    <section class="mt-8 grid grid-cols-2 gap-4">
+      {coreTools.map((tool) => {
+        const icon = getIcon(tool.icon);
+        return (
+          <a href={tool.href} class="tool card-in" style={`--accent:${tool.accent};--soft:${tool.soft};`}>
+            <div class="tool-icon-wrap">
+              <svg viewBox={icon.viewBox} class="svg-icon" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                {icon.paths.map((d) => (
+                  <path d={d} stroke-linecap="round" stroke-linejoin="round"></path>
+                ))}
+              </svg>
+            </div>
+            <h3 class="tool-title">{tool.title}</h3>
+            <p class="tool-sub">{tool.sub}</p>
+          </a>
+        );
+      })}
+    </section>
+
+    <section class="mt-10">
+      <div class="mb-4 flex items-end justify-between">
+        <h2 class="section-title">သင်ယူမှုလမ်းကြောင်း / Learning Path</h2>
+        <a href="/path" class="text-xs font-bold text-slate-700 hover:text-indigo-700">View All</a>
+      </div>
+      <div class="flex flex-col gap-4">
+        {studyPaths.map((path) => {
+          const icon = getIcon(path.icon);
+          return (
+            <a href={path.href} class="path-card card-in" style={`--accent:${path.accent};`}>
+              <div class="path-icon">
+                <svg viewBox={icon.viewBox} class="svg-icon" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  {icon.paths.map((d) => (
+                    <path d={d} stroke-linecap="round" stroke-linejoin="round"></path>
+                  ))}
+                </svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="mb-1 flex items-center justify-between gap-3">
+                  <h4 class="truncate text-base font-black text-slate-900 sm:text-lg">{path.title}</h4>
+                  <span class="path-count">{path.count}</span>
+                </div>
+                <p class="text-xs leading-relaxed text-slate-600 sm:text-sm">{path.desc}</p>
+              </div>
+              <svg class="path-arrow" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M12.6 12L8 7.4L9.4 6l6 6l-6 6L8 16.6z" />
+              </svg>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  </main>
+</GridLayout>
+
+<style is:global>
+  :root {
+    --glass: rgba(255, 255, 255, 0.74);
+    --glass-strong: rgba(255, 255, 255, 0.86);
+    --glass-border: rgba(255, 255, 255, 0.52);
+  }
+
+  body {
+    background: url("/assets/images/desktopWallpaper_1.jpg") center / cover fixed no-repeat;
+    font-family: "Noto Sans Myanmar", "Manrope", "Segoe UI", sans-serif;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background:
+      radial-gradient(1200px 420px at 6% -8%, rgba(37, 99, 235, 0.28), transparent 62%),
+      radial-gradient(900px 420px at 100% 108%, rgba(5, 150, 105, 0.18), transparent 62%),
+      linear-gradient(to bottom, rgba(15, 23, 42, 0.32), rgba(15, 23, 42, 0.12));
+  }
+
+  #sidebar-left,
+  #sidebar-right {
+    display: none !important;
+  }
+</style>
+
+<style>
+  .glass-card {
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 14px 36px rgba(2, 6, 23, 0.12);
+  }
+
+  .hero-card {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+    border-radius: 2rem;
+    padding: 1.25rem;
+  }
+
+  .hero-kpi { justify-self: start; }
+
+  .kpi-ring {
+    width: 92px;
+    height: 92px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background:
+      conic-gradient(#4f46e5 0 226deg, rgba(79, 70, 229, 0.12) 226deg 360deg),
+      radial-gradient(circle at center, #fff 58%, transparent 59%);
+    color: #312e81;
+    font-weight: 900;
+    font-size: 1.1rem;
+    box-shadow: 0 10px 20px rgba(79, 70, 229, 0.24);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    background: rgba(79, 70, 229, 0.14);
+    color: #3730a3;
+    padding: 0.38rem 0.72rem;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0.65rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+    transition: 180ms ease;
+  }
+
+  .btn-primary {
+    background: #111827;
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(17, 24, 39, 0.24);
+  }
+
+  .btn-ghost {
+    border: 1px solid rgba(15, 23, 42, 0.16);
+    background: rgba(255, 255, 255, 0.62);
+    color: #0f172a;
+  }
+
+  .pinyin-card {
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border-radius: 1.2rem;
+    text-decoration: none;
+    text-align: center;
+    padding: 0.95rem 0.7rem;
+    box-shadow: 0 10px 24px rgba(2, 6, 23, 0.1);
+    transition: 180ms ease;
+  }
+
+  .pinyin-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(2, 6, 23, 0.14);
+  }
+
+  .pinyin-icon-wrap {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 0.45rem;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: var(--soft);
+    color: var(--accent);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+  }
+
+  .pinyin-name {
+    font-size: 0.78rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #0f172a;
+  }
+
+  .pinyin-sub {
+    margin-top: 0.28rem;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    text-transform: uppercase;
+  }
+
+  .tool {
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border-radius: 1.6rem;
+    padding: 1.1rem 0.95rem;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 10px 24px rgba(2, 6, 23, 0.1);
+    transition: 180ms ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tool::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  .tool:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 30px rgba(2, 6, 23, 0.14);
+  }
+
+  .tool-icon-wrap {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 0.5rem;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: var(--soft);
+    color: var(--accent);
+    border: 1px solid rgba(255, 255, 255, 0.58);
+  }
+
+  .svg-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .tool-title {
+    font-size: 0.93rem;
+    font-weight: 900;
+    color: #0f172a;
+  }
+
+  .tool-sub {
+    margin-top: 0.24rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #64748b;
+  }
+
+  .section-title {
+    font-size: 1.04rem;
+    font-weight: 900;
+    color: #f8fafc;
+    text-shadow: 0 4px 14px rgba(2, 6, 23, 0.45);
+  }
+
+  .path-card {
+    border: 1px solid var(--glass-border);
+    background: var(--glass-strong);
+    backdrop-filter: blur(12px);
+    border-radius: 1.6rem;
+    padding: 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    box-shadow: 0 12px 26px rgba(2, 6, 23, 0.1);
+    transition: 180ms ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .path-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: var(--accent);
+  }
+
+  .path-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 34px rgba(2, 6, 23, 0.14);
+  }
+
+  .path-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    color: #0f172a;
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(148, 163, 184, 0.24);
+  }
+
+  .path-count {
+    white-space: nowrap;
+    border-radius: 999px;
+    padding: 0.18rem 0.62rem;
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: #312e81;
+    background: rgba(79, 70, 229, 0.14);
+  }
+
+  .path-arrow { color: #94a3b8; transition: 180ms ease; }
+
+  .path-card:hover .path-arrow {
+    color: #4f46e5;
+    transform: translateX(2px);
+  }
+
+  .card-in {
+    animation: cardIn 520ms ease both;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(9px) scale(0.99); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @media (min-width: 768px) {
+    .hero-card {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 1.5rem 1.6rem;
+    }
+
+    .hero-kpi { justify-self: end; }
+  }
+</style>
