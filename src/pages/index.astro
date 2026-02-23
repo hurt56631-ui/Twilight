@@ -1,5 +1,6 @@
 ---
 import GridLayout from "@layouts/grid.astro";
+import LibraryMount from "../components/LibraryMount.jsx"; // 引入刚才写的桥梁组件
 
 // 1. 顶部 4 个拼音基础模块
 const pinyinNav = [
@@ -12,7 +13,8 @@ const pinyinNav = [
 // 2. 中间 4 个核心工具模块
 const coreTools = [
   { zh: "AI 翻译", mm: "AI ဘာသာပြန်", icon: "globe", href: "/ai-translate", bg: "rgba(79,70,229,0.1)", iconColor: "text-indigo-600" },
-  { zh: "免费书籍", mm: "စာကြည့်တိုက်", icon: "books", href: "/library", bg: "rgba(8,145,178,0.1)", iconColor: "text-cyan-600" },
+  // 👇 注意这里：改成了 action 触发，点击呼出 React 书架
+  { zh: "免费书籍", mm: "စာကြည့်တိုက်", icon: "books", action: "open-library", bg: "rgba(8,145,178,0.1)", iconColor: "text-cyan-600" },
   { zh: "单词收藏", mm: "မှတ်ထားသော စာလုံး", icon: "star", href: "/words", bg: "rgba(71,85,105,0.1)", iconColor: "text-slate-700" },
   { zh: "口语收藏", mm: "မှတ်ထားသော စကားပြော", icon: "speaker", href: "/oral", bg: "rgba(71,85,105,0.1)", iconColor: "text-slate-700" },
 ];
@@ -53,7 +55,43 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
 ---
 
 <GridLayout title="Chinese Learning Hub">
-  <main class="relative mx-auto max-w-lg px-4 pb-28 pt-4 z-10">
+
+  <!-- ================= 电报级抽屉侧边栏 (HTML结构) ================= -->
+  <!-- 遮罩层 -->
+  <div id="tg-overlay" class="fixed inset-0 bg-black/50 z-[90] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+  
+  <!-- 侧边栏主体 -->
+  <aside id="tg-sidebar" class="fixed top-0 bottom-0 left-0 w-[280px] bg-white/95 backdrop-blur-xl z-[100] transform -translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
+    <!-- 顶部用户信息区 -->
+    <div class="px-5 pt-12 pb-6 bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
+      <div class="w-16 h-16 rounded-full bg-white/20 border-2 border-white/50 flex items-center justify-center mb-3">
+        <span class="text-2xl font-bold">ME</span>
+      </div>
+      <h2 class="text-lg font-bold">Admin</h2>
+      <p class="text-xs text-indigo-100 opacity-90">+86 123 4567 8900</p>
+    </div>
+    
+    <!-- 菜单列表 -->
+    <div class="flex-1 overflow-y-auto py-3">
+      <a href="/profile" class="flex items-center gap-4 px-6 py-3.5 text-slate-700 hover:bg-slate-100 transition-colors">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 text-slate-500"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="font-medium text-[15px]">个人资料</span>
+      </a>
+      <a href="/settings" class="flex items-center gap-4 px-6 py-3.5 text-slate-700 hover:bg-slate-100 transition-colors">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 text-slate-500"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span class="font-medium text-[15px]">设置</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- 顶部触发按钮 -->
+  <div class="absolute top-4 left-4 z-40">
+    <button id="open-sidebar-btn" class="w-10 h-10 bg-white/50 backdrop-blur shadow-sm rounded-full flex items-center justify-center text-slate-700 hover:bg-white transition-colors">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="w-5 h-5"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+
+  <main class="relative mx-auto max-w-lg px-4 pb-28 pt-16 z-10" id="main-content">
     
     <!-- 顶部拼音导航 -->
     <section class="grid grid-cols-4 gap-3">
@@ -98,7 +136,12 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
       {coreTools.map((tool, index) => {
         const icon = getIcon(tool.icon);
         return (
-          <a href={tool.href} class="glass-card flex items-center gap-3 p-3.5 hover:bg-white/80 card-in" style={`animation-delay: ${index * 50 + 250}ms;`}>
+          <a 
+            href={tool.href || "#"} 
+            onclick={tool.action ? `event.preventDefault(); window.dispatchEvent(new Event('${tool.action}'))` : undefined}
+            class="glass-card flex items-center gap-3 p-3.5 hover:bg-white/80 card-in" 
+            style={`animation-delay: ${index * 50 + 250}ms;`}
+          >
             <div class={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${tool.iconColor}`} style={`background-color: ${tool.bg}`}>
               <svg viewBox={icon.viewBox} class="w-4 h-4" fill={icon.fill || "none"} stroke={icon.stroke || "currentColor"} stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 {icon.paths.map((d) => <path d={d}></path>)}
@@ -142,12 +185,15 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
     </section>
   </main>
 
+  <!-- 挂载 React 书架组件 (隐藏式) -->
+  <LibraryMount client:only="react" />
+
   <!-- ================= 底部 5 个 APP 导航栏 ================= -->
   <nav class="app-bottom-nav sm:hidden">
-    <!-- 1. 消息 (Chats) -->
+    <!-- 1. 消息 (Chats) - 更换为圆润的微信/iOS风格图标 -->
     <a href="https://bbs.886.best/user/mei/chats" class="nav-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-[22px] h-[22px] mb-1">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
       </svg>
       <span>消息</span>
     </a>
@@ -181,7 +227,7 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
       <span>动态</span>
     </a>
 
-    <!-- 5. 学习 (当前页 高亮) -->
+    <!-- 5. 学习 (当前页 高亮，实心图标) -->
     <a href="/" class="nav-item active">
       <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" class="w-[24px] h-[24px] mb-1">
         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
@@ -193,6 +239,84 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
 
 </GridLayout>
 
+<!-- ================= 纯原生手势交互逻辑 ================= -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.getElementById('tg-sidebar');
+    const overlay = document.getElementById('tg-overlay');
+    const openBtn = document.getElementById('open-sidebar-btn');
+    const mainContent = document.getElementById('main-content');
+    
+    const sidebarWidth = 280;
+    let isDragging = false;
+    let startX = 0;
+    let currentX = -sidebarWidth;
+
+    const openSidebar = () => {
+      sidebar.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+      overlay.style.transition = 'opacity 0.3s ease';
+      sidebar.style.transform = 'translateX(0)';
+      overlay.style.opacity = '1';
+      overlay.style.pointerEvents = 'auto';
+      currentX = 0;
+    };
+
+    const closeSidebar = () => {
+      sidebar.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+      overlay.style.transition = 'opacity 0.3s ease';
+      sidebar.style.transform = `translateX(-${sidebarWidth}px)`;
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+      currentX = -sidebarWidth;
+    };
+
+    // 按钮点击打开
+    openBtn?.addEventListener('click', openSidebar);
+    // 点击遮罩关闭
+    overlay?.addEventListener('click', closeSidebar);
+
+    // 屏幕左侧边缘滑动呼出逻辑 (原生 JS 性能最高)
+    document.addEventListener('touchstart', (e) => {
+      // 只有在屏幕最左侧 30px 内滑动，或者侧边栏已经打开时，才允许拖拽
+      if (currentX === -sidebarWidth && e.touches[0].clientX > 30) return;
+      
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      sidebar.style.transition = 'none'; // 拖拽时取消动画，实现跟随手指
+      overlay.style.transition = 'none';
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      const deltaX = e.touches[0].clientX - startX;
+      let newX = currentX + deltaX;
+      
+      // 限制拖拽范围
+      if (newX > 0) newX = 0;
+      if (newX < -sidebarWidth) newX = -sidebarWidth;
+      
+      sidebar.style.transform = `translateX(${newX}px)`;
+      
+      // 动态计算遮罩透明度 (根据拉出的距离)
+      const progress = (newX + sidebarWidth) / sidebarWidth;
+      overlay.style.opacity = progress.toString();
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      
+      const endX = sidebar.getBoundingClientRect().x;
+      // 松手时，如果拉出超过一半，则完全打开；否则退回关闭
+      if (endX > -sidebarWidth / 2) {
+        openSidebar();
+      } else {
+        closeSidebar();
+      }
+    });
+  });
+</script>
+
 <style is:global>
   body {
     background: url("/assets/images/desktopWallpaper_1.jpg") center / cover fixed no-repeat;
@@ -203,6 +327,8 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
     background: rgba(241, 245, 249, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   }
   .burmese-text { line-height: 1.6; }
+  
+  /* 隐藏原主题可能带的左右侧边栏 */
   #sidebar-left, #sidebar-right { display: none !important; }
 </style>
 
@@ -229,7 +355,7 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
     bottom: 0; left: 0; right: 0;
     z-index: 50;
     display: flex;
-    justify-content: space-between; /* 平均分布 5 个按钮 */
+    justify-content: space-between;
     align-items: center;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
@@ -245,7 +371,7 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex: 1; /* 平分空间 */
+    flex: 1; 
     height: 100%;
     color: #64748b;
     text-decoration: none;
@@ -253,7 +379,7 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
   }
   
   .nav-item span {
-    font-size: 10px; /* 5个按钮较多，字号调小一点 */
+    font-size: 10px; 
     font-weight: 600;
     margin-top: 2px;
   }
