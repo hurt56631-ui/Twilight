@@ -1,6 +1,5 @@
 ---
 import GridLayout from "@layouts/grid.astro";
-import LibraryMount from "../components/LibraryMount.jsx";
 
 // 1. 顶部 4 个拼音基础模块
 const pinyinNav = [
@@ -10,10 +9,10 @@ const pinyinNav = [
   { zh: "声调", mm: "အသံ", icon: "document", href: "/pinyin/tones", bg: "rgba(234,88,12,0.1)", iconColor: "text-orange-600" },
 ];
 
-// 2. 中间 4 个核心工具模块
+// 2. 中间 4 个核心工具模块（免费书籍改成跳转 /library）
 const coreTools = [
   { zh: "AI 翻译", mm: "AI ဘာသာပြန်", icon: "globe", href: "/ai-translate", bg: "rgba(79,70,229,0.1)", iconColor: "text-indigo-600" },
-  { zh: "免费书籍", mm: "စာကြည့်တိုက်", icon: "books", action: "open-library", bg: "rgba(8,145,178,0.1)", iconColor: "text-cyan-600" },
+  { zh: "免费书籍", mm: "စာကြည့်တိုက်", icon: "books", href: "/library", bg: "rgba(8,145,178,0.1)", iconColor: "text-cyan-600" },
   { zh: "单词收藏", mm: "မှတ်ထားသော စာလုံး", icon: "star", href: "/words", bg: "rgba(71,85,105,0.1)", iconColor: "text-slate-700" },
   { zh: "口语收藏", mm: "မှတ်ထားသော စကားပြော", icon: "speaker", href: "/oral", bg: "rgba(71,85,105,0.1)", iconColor: "text-slate-700" },
 ];
@@ -24,7 +23,7 @@ const systemCourses = [
     badge: "Words",
     sub: "词汇 (VOCABULARY)",
     title: "日常高频词汇",
-    mmDesc: "အခြေခံ စကားလုံးများကို လေ့လာပါ။",
+    mmDesc: "အခြေခံ စကားလုံးများကို လေ့လာပါ。",
     zhDesc: "掌握生活与考试中最核心的词汇",
     bgImg: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=800",
     fallbackBg: "bg-blue-900",
@@ -34,7 +33,7 @@ const systemCourses = [
     badge: "Spoken",
     sub: "口语 (ORAL)",
     title: "地道汉语口语",
-    mmDesc: "နေ့စဉ်သုံး စကားပြောဆိုမှုများကို လေ့ကျင့်ပါ။",
+    mmDesc: "နေ့စဉ်သုံး စကားပြောဆိုမှုများကို လေ့ကျင့်ပါ。",
     zhDesc: "跟读与练习最纯正的日常交流口语",
     bgImg: "https://images.unsplash.com/photo-1528712306091-ed0763094c98?auto=format&fit=crop&q=80&w=800",
     fallbackBg: "bg-emerald-900",
@@ -70,7 +69,6 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
 
 <GridLayout title="Chinese Learning Hub">
   <main class="relative mx-auto max-w-lg px-4 pb-28 pt-4 z-10">
-    <!-- 顶部拼音导航 -->
     <section class="grid grid-cols-4 gap-3">
       {pinyinNav.map((item, index) => {
         const icon = getIcon(item.icon);
@@ -90,7 +88,6 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
       })}
     </section>
 
-    <!-- 发音技巧 Banner -->
     <section class="mt-4 card-in" style="animation-delay: 200ms;">
       <a href="/tips" class="glass-card flex items-center justify-between px-4 py-3 hover:bg-white/80">
         <div class="flex items-center gap-3">
@@ -108,28 +105,10 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
       </a>
     </section>
 
-    <!-- 中间 4 个工具区 -->
     <section class="mt-4 grid grid-cols-2 gap-3">
       {coreTools.map((tool, index) => {
         const icon = getIcon(tool.icon);
-        return tool.action ? (
-          <button
-            type="button"
-            data-open-library
-            class="glass-card flex items-center gap-3 p-3.5 hover:bg-white/80 card-in text-left"
-            style={`animation-delay: ${index * 50 + 250}ms;`}
-          >
-            <div class={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${tool.iconColor}`} style={`background-color: ${tool.bg}`}>
-              <svg viewBox={icon.viewBox} class="w-4 h-4" fill={icon.fill || "none"} stroke={icon.stroke || "currentColor"} stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                {icon.paths.map((d) => <path d={d}></path>)}
-              </svg>
-            </div>
-            <div class="flex flex-col min-w-0">
-              <span class="text-[14px] font-bold text-slate-800 truncate">{tool.zh}</span>
-              <span class="text-[10px] text-slate-500 mt-0.5 truncate burmese-text">{tool.mm}</span>
-            </div>
-          </button>
-        ) : (
+        return (
           <a
             href={tool.href}
             class="glass-card flex items-center gap-3 p-3.5 hover:bg-white/80 card-in"
@@ -149,7 +128,6 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
       })}
     </section>
 
-    <!-- System Courses -->
     <section class="mt-8">
       <div class="mb-3 px-1 flex items-center gap-2">
         <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
@@ -178,10 +156,6 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
     </section>
   </main>
 
-  <!-- 挂载 React 书架组件 -->
-  <LibraryMount client:only="react" />
-
-  <!-- 底部 5 个 APP 导航栏 -->
   <nav class="app-bottom-nav sm:hidden">
     <a href="https://bbs.886.best/user/mei/chats" class="nav-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-[22px] h-[22px] mb-1">
@@ -225,15 +199,6 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
     </a>
   </nav>
 </GridLayout>
-
-<script>
-  document.addEventListener("click", (event) => {
-    const trigger = event.target.closest("[data-open-library]");
-    if (!trigger) return;
-    event.preventDefault();
-    window.dispatchEvent(new Event("open-library"));
-  });
-</script>
 
 <style is:global>
   body {
@@ -290,14 +255,8 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
   }
 
   @keyframes slideUpFade {
-    0% {
-      opacity: 0;
-      transform: translateY(15px) scale(0.98);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
+    0% { opacity: 0; transform: translateY(15px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   .app-bottom-nav {
