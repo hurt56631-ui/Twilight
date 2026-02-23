@@ -1,7 +1,7 @@
 ---
 import GridLayout from "@layouts/grid.astro";
 
-// 顶部 4 个拼音基础模块 (参考图1)
+// 1. 顶部 4 个拼音基础模块
 const pinyinNav = [
   { zh: "声母", mm: "ဗျည်း", icon: "mic", href: "/pinyin/initials", bg: "bg-blue-50/80", iconColor: "text-blue-600" },
   { zh: "韵母", mm: "သရ", icon: "music", href: "/pinyin/finals", bg: "bg-emerald-50/80", iconColor: "text-emerald-500" },
@@ -9,44 +9,44 @@ const pinyinNav = [
   { zh: "声调", mm: "အသံ", icon: "document", href: "/pinyin/tones", bg: "bg-orange-50/80", iconColor: "text-orange-500" },
 ];
 
-// 中间 4 个核心工具模块 (参考图1)
+// 2. 中间 2 个核心工具模块
 const coreTools = [
   { zh: "AI 翻译", mm: "AI ဘာသာပြန်", icon: "globe", href: "/ai-translate", bg: "bg-indigo-50/60", iconColor: "text-indigo-600" },
   { zh: "免费书籍", mm: "စာကြည့်တိုက်", icon: "books", href: "/library", bg: "bg-cyan-50/60", iconColor: "text-cyan-600" },
-  { zh: "单词收藏", mm: "မှတ်ထားသော စာလုံး", icon: "star", href: "/words", bg: "bg-slate-50/80", iconColor: "text-slate-700" },
-  { zh: "口语收藏", mm: "မှတ်ထားသော စကားပြော", icon: "speaker", href: "/oral", bg: "bg-slate-50/80", iconColor: "text-slate-700" },
 ];
 
-// 底部带背景图的课程卡片 (参考图2)
-const systemCourses = [
+// 3. 底部带背景图的系统课程/模块 (单词 -> 口语 -> HSK1)
+const mainPaths = [
   { 
-    badge1: "HSK 1", badge2: "2 Free", 
+    badge: "Words", 
+    sub: "词汇 (VOCABULARY)", title: "单词收藏", 
+    mmDesc: "မှတ်ထားသော စာလုံးများကို လေ့ကျင့်ပါ။", 
+    zhDesc: "复习与巩固你收藏的核心词汇", 
+    bgImg: "/assets/images/words-bg.jpg", // 请替换为你自己的图片路径
+    fallbackBg: "bg-blue-900", // 图片加载失败时的底色
+    href: "/words" 
+  },
+  { 
+    badge: "Spoken", 
+    sub: "口语 (ORAL)", title: "口语收藏", 
+    mmDesc: "မှတ်ထားသော စကားပြောများကို လေ့ကျင့်ပါ။", 
+    zhDesc: "跟读与练习地道的日常口语", 
+    bgImg: "/assets/images/oral-bg.jpg", // 请替换为你自己的图片路径
+    fallbackBg: "bg-emerald-900",
+    href: "/oral" 
+  },
+  { 
+    badge: "HSK 1", 
     sub: "入门 (INTRO)", title: "HSK 1", 
     mmDesc: "အသုံးအများဆုံး စကားလုံးများနှင့် သဒ္ဒါ", 
     zhDesc: "掌握最常用词语和基本语法", 
-    // 使用高质量的占位图，你可以换成你自己的图片路径
-    bgImg: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&q=80&w=800",
+    bgImg: "/assets/images/hsk1-bg.jpg", // 请替换为你自己的图片路径
+    fallbackBg: "bg-slate-800",
     href: "/course/hsk1" 
-  },
-  { 
-    badge1: "HSK 2", badge2: "Pro", 
-    sub: "基础 (BASIC)", title: "HSK 2", 
-    mmDesc: "နေ့စဉ်သုံး စကားပြောဆိုမှုများကို လေ့ကျင့်ပါ။", 
-    zhDesc: "能够就日常话题进行简单交流", 
-    bgImg: "https://images.unsplash.com/photo-1583805373066-cb9499158c56?auto=format&fit=crop&q=80&w=800",
-    href: "/course/hsk2" 
-  },
-  { 
-    badge1: "Spoken", badge2: "Hot", 
-    sub: "口语 (ORAL)", title: "Daily Chinese", 
-    mmDesc: "တရုတ်ဘာသာစကား၏ သဒ္ဒါစည်းမျဉ်းများ", 
-    zhDesc: "高频生活口语与地道表达", 
-    bgImg: "https://images.unsplash.com/photo-1552084117-56a98a938cce?auto=format&fit=crop&q=80&w=800",
-    href: "/course/oral" 
-  },
+  }
 ];
 
-// 更精致的 App 风格 SVG 图标
+// SVG 图标库
 const iconMap = {
   mic: { viewBox: "0 0 24 24", paths: ["M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z", "M19 10v2a7 7 0 0 1-14 0v-2", "M12 19v3"] },
   music: { viewBox: "0 0 24 24", paths: ["M9 18V5l12-2v13", "M9 9l12-2", "M6 15a3 3 0 1 0 3 3v-3H6Z", "M18 13a3 3 0 1 0 3 3v-3h-3Z"] },
@@ -55,15 +55,13 @@ const iconMap = {
   bulb: { viewBox: "0 0 24 24", paths: ["M9 18h6", "M10 22h4", "M15.09 14c.18-.98.65-1.74 1.41-2.5A6 6 0 1 0 8 4.92C6.35 6.2 5.56 8.35 6.07 10.34c.32 1.25.96 2.45 1.84 3.32.76.76 1.23 1.52 1.41 2.5"] },
   globe: { viewBox: "0 0 24 24", paths: ["M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z", "M2 12h20", "M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"] },
   books: { viewBox: "0 0 24 24", paths: ["M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20", "M8 7h6", "M8 11h8"] },
-  star: { viewBox: "0 0 24 24", fill: "currentColor", stroke: "none", paths: ["M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"] },
-  speaker: { viewBox: "0 0 24 24", fill: "currentColor", stroke: "none", paths: ["M11 5L6 9H2v6h4l5 4V5z", "M15.54 8.46a5 5 0 0 1 0 7.07", "M19.07 4.93a10 10 0 0 1 0 14.14"] },
 };
 
 const getIcon = (name) => iconMap[name] || iconMap.mic;
 ---
 
 <GridLayout title="Chinese Learning Hub">
-  <main class="relative mx-auto max-w-lg px-4 pb-16 pt-6"> <!-- max-w-lg 限制最大宽度，让它在电脑上看起来也像手机排版，更精致紧凑 -->
+  <main class="relative mx-auto max-w-lg px-4 pb-16 pt-4"> <!-- pt-4 减少了顶部的留白 -->
     
     <!-- 1. 顶部 4 宫格导航 -->
     <section class="grid grid-cols-4 gap-3">
@@ -72,7 +70,7 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
         return (
           <a href={item.href} class={`app-card ${item.bg} flex flex-col items-center justify-center py-4 px-1 gap-2 hover:brightness-95 card-in`} style={`animation-delay: ${index * 50}ms;`}>
             <div class={`w-7 h-7 ${item.iconColor}`}>
-              <svg viewBox={icon.viewBox} class="w-full h-full" fill={icon.fill || "none"} stroke={icon.stroke || "currentColor"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox={icon.viewBox} class="w-full h-full" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 {icon.paths.map((d) => <path d={d}></path>)}
               </svg>
             </div>
@@ -103,14 +101,14 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
       </a>
     </section>
 
-    <!-- 3. 中间 2x2 工具区 -->
+    <!-- 3. 中间 2 个工具区 -->
     <section class="mt-4 grid grid-cols-2 gap-3">
       {coreTools.map((tool, index) => {
         const icon = getIcon(tool.icon);
         return (
           <a href={tool.href} class={`app-card ${tool.bg} flex items-center gap-3 p-3.5 hover:brightness-95 card-in`} style={`animation-delay: ${index * 50 + 250}ms;`}>
             <div class={`w-6 h-6 flex-shrink-0 ${tool.iconColor}`}>
-              <svg viewBox={icon.viewBox} class="w-full h-full" fill={icon.fill || "none"} stroke={icon.stroke || "currentColor"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox={icon.viewBox} class="w-full h-full" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 {icon.paths.map((d) => <path d={d}></path>)}
               </svg>
             </div>
@@ -123,7 +121,7 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
       })}
     </section>
 
-    <!-- 4. System Courses (带背景图) -->
+    <!-- 4. System Courses (单词 -> 口语 -> HSK) -->
     <section class="mt-8">
       <div class="mb-3 px-1 flex items-center gap-2">
         <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
@@ -131,24 +129,30 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
       </div>
       
       <div class="flex flex-col gap-4">
-        {systemCourses.map((course, index) => (
-          <a href={course.href} class="course-card group card-in" style={`animation-delay: ${index * 100 + 450}ms;`}>
-            <!-- 背景图 -->
-            <img src={course.bgImg} alt={course.title} class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-            <!-- 渐变遮罩 (底部深色，保证白字清晰) -->
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+        {mainPaths.map((course, index) => (
+          <!-- 这里使用 fallbackBg，防止图片加载失败时太难看 -->
+          <a href={course.href} class={`course-card group card-in ${course.fallbackBg}`} style={`animation-delay: ${index * 100 + 350}ms;`}>
             
-            <div class="relative h-full flex flex-col justify-between p-4">
-              <!-- 左上角 Badges -->
+            <!-- 使用 div 替代 img，如果 url 失效，底层颜色会兜底显示 -->
+            <div 
+              class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-80" 
+              style={`background-image: url('${course.bgImg}');`}
+            ></div>
+
+            <!-- 黑色渐变遮罩，确保不管图片多白，文字都看得清 -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+            
+            <div class="relative h-full flex flex-col justify-between p-4 min-h-[160px]">
+              <!-- 左上角 Badge -->
               <div class="flex gap-2">
-                <span class="bg-white/90 text-slate-800 text-[11px] font-black px-2.5 py-1 rounded-full">{course.badge1}</span>
-                <span class="bg-cyan-500 text-white text-[11px] font-black px-2.5 py-1 rounded-full">{course.badge2}</span>
+                <span class="bg-white/90 text-slate-800 text-[11px] font-black px-2.5 py-1 rounded-full">{course.badge}</span>
               </div>
               
               <!-- 底部文字信息 -->
-              <div class="mt-20">
-                <p class="text-cyan-400 font-bold text-[12px] tracking-widest mb-1">{course.sub}</p>
-                <h3 class="text-white font-black text-3xl mb-2">{course.title}</h3>
+              <div class="mt-8">
+                <p class="text-cyan-400 font-bold text-[11px] tracking-widest mb-1">{course.sub}</p>
+                <!-- 调整了标题大小为 text-2xl 适合手机 -->
+                <h3 class="text-white font-black text-2xl mb-1.5">{course.title}</h3>
                 <p class="text-slate-200 text-[13px] burmese-text mb-0.5 line-clamp-1">{course.mmDesc}</p>
                 <p class="text-slate-300 text-[12px] font-medium line-clamp-1">{course.zhDesc}</p>
               </div>
@@ -162,20 +166,23 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
 
 <style is:global>
   body {
-    background-color: #f8fafc; /* 使用非常干净的浅灰底色作为基底 */
+    background-color: #f8fafc;
     font-family: "Noto Sans Myanmar", "Manrope", "Segoe UI", sans-serif;
   }
 
-  /* 修复缅文行高 */
   .burmese-text {
     line-height: 1.6;
+  }
+
+  #sidebar-left,
+  #sidebar-right {
+    display: none !important;
   }
 </style>
 
 <style>
-  /* 通用 App 卡片样式（超圆角、极淡阴影、毛玻璃） */
   .app-card {
-    border-radius: 1.25rem; /* 对应 rounded-2xl */
+    border-radius: 1.25rem; 
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.6);
@@ -183,20 +190,17 @@ const getIcon = (name) => iconMap[name] || iconMap.mic;
     transition: all 0.2s ease;
   }
 
-  /* 图片课程卡片专用样式 */
   .course-card {
     display: block;
     position: relative;
     width: 100%;
     border-radius: 1.25rem;
     overflow: hidden;
-    min-height: 180px; /* 保证卡片有足够高度显示图片 */
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transform: translateZ(0); /* 开启硬件加速，防止圆角在图片缩放时失效 */
+    transform: translateZ(0); 
   }
 
-  /* 入场动画 */
   .card-in {
     opacity: 0;
     animation: slideUpFade 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
