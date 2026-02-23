@@ -2,15 +2,10 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, Loader2, ZoomIn, ZoomOut, List, X, AlertCircle } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
-import workerSrc from "pdfjs-dist/build/pdf.worker.min.mjs?url";
-
-const HISTORY_KEY = "hsk-reader-meta";
-const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-
 if (typeof window !== "undefined") {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
+  // 动态获取当前安装的 pdfjs 版本，并从高防 CDN 获取 worker 文件，彻底绕过 Vite 打包报错！
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 }
-
 const getMobileFitScale = (screenWidth) => {
   const horizontalPadding = 24;
   return clamp((screenWidth - horizontalPadding) / 600, 0.6, 1.2);
